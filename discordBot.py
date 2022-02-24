@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 from discord.ext import commands
 
+
 class SummonerData:
     summoner_name: str
     rank: str
@@ -17,12 +18,13 @@ class SummonerData:
     champKD = int
     champGamesPlayed = int
     champWR = str
+
     def __init__(self, url):
         html_text = requests.get(url).text
         soup = BeautifulSoup(html_text, "html.parser")
-        #finding summoner name
+        # finding summoner name
         self.summoner_name = soup.find('div', class_="summoner-name").text
-        #finding rank, lp, winrate
+        # finding rank, lp, win rate
         try:
             rank_list = soup.find('div', class_='rank-list')
             rank_info = rank_list.find_all('strong')
@@ -38,6 +40,7 @@ class SummonerData:
         self.champName = champ_list.find_all('div', class_='champion-name')
         self.champWR = champ_list.find_all('div', class_='win-rate')
         # self.champGamesPlayed =
+
     def __str__(self):
         return f'''
         Summoner Name: {self.summoner_name}
@@ -46,19 +49,23 @@ class SummonerData:
         Top 5 champions: {self.champName[0].text} with a {self.champWR[0].text} winrate
         '''
 
+
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 bot = commands.Bot(command_prefix='!')
 
+
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
 
-@bot.command(name='stats', help ='Says happy birthday to you :)')
+
+@bot.command(name='stats', help='Says happy birthday to you :)')
 async def hbd(ctx, name):
     obj = SummonerData("https://u.gg/lol/profile/na1/" + name + "/overview")
     await ctx.send(obj.__str__())
+
 
 bot.run(TOKEN)
 # name = input("Enter your summoner name:")
