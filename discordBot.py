@@ -19,7 +19,8 @@ class SummonerData:
     champGamesPlayed = int
     champWR = str
 
-    def __init__(self, url):
+    def __init__(self, name):
+        url = "https://u.gg/lol/profile/na1/" + name + "/overview"
         html_text = requests.get(url).text
         soup = BeautifulSoup(html_text, "html.parser")
         # finding summoner name
@@ -42,12 +43,12 @@ class SummonerData:
         # self.champGamesPlayed =
 
     def __str__(self):
-        return f'''
-        Summoner Name: {self.summoner_name}
-        Rank (Solo/Duo): {self.rank} ({self.win_rate[0].text})
-        LP: {self.lp}
-        Top 5 champions: {self.champName[0].text} with a {self.champWR[0].text} winrate
-        '''
+        return (
+            f'Summoner Name: {self.summoner_name}\n'
+            f'Rank (Solo/Duo): {self.rank} ({self.win_rate[0].text})\n'
+            f'LP: {self.lp}\n'
+            f'Top 5 champions: {self.champName[0].text} with a {self.champWR[0].text} winrate\n'
+        )
 
 
 load_dotenv()
@@ -63,7 +64,7 @@ async def on_ready():
 
 @bot.command(name='stats', help='Says happy birthday to you :)')
 async def hbd(ctx, name):
-    obj = SummonerData("https://u.gg/lol/profile/na1/" + name + "/overview")
+    obj = SummonerData(name)
     await ctx.send(obj.__str__())
 
 
